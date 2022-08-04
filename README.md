@@ -20,6 +20,8 @@ getLiveData(filterActiveSensors = true) //Gets current Weather conditions.
 
 getRainData()           //Gets Rain Data. (in development)
 
+getSoilMoistureCalibration() //Gets Soil Moisture Calibration Data (including current analog and digital value for all connected sensors)
+
 getFirmwareVersion()    //Gets current Firmware version.
 
 getSystemParams()       //Gets System Parameters. (in development)

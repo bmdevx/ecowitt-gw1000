@@ -290,6 +290,15 @@ class GW1000 {
         });
     }
 
+    getSoilMoistureCalibration() {
+        return new Promise((res, rej) => {
+            this.runCommand(Commands.CMD_GET_SOILHUMIAD)
+                .then(buffer => {
+                    res(this.utils.parseSoilData(buffer));
+                });
+        });
+    }
+
     setRainData(data) {
         return new Promise((res, rej) => {
             this.getRainData()
