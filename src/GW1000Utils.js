@@ -126,6 +126,15 @@ const RAIN_DATA_STRUCT = [
     ['rain_year', 'bigRain', 4]
 ]
 
+    const SOIL_DATA_STRUCT = [
+        ['channel', 'uint8', 1], // confirm (may not exist)
+        ['current_humidity', 'uint8', 1], // confirm (may be 4)
+        ['current_ad', 'uint16', 2], // confirm (may not exist)
+        ['calibration_enabled', 'uint8', 1], // confirm (may be 4)
+        ['min_ad', 'uint8', 1], // confirm (may be 2)
+        ['max_ad', 'uint16', 2],
+    ]
+    
 var MULTI_BATT = {
     'wh40': 4,
     'wh26': 5,
@@ -148,8 +157,8 @@ class GW1000Utils {
             }
         }
 
-        this.parseStructStrict = (buffer, struct) => {
-            var data = {}, idx = 4;
+        this.parseStructStrict = (buffer, struct, idx = 4) => {
+            var data = {};
 
             struct.forEach(([field, func, fieldSize]) => {
                 if (fieldSize == null) {
@@ -203,6 +212,21 @@ class GW1000Utils {
         return data;
     }
 
+    parseSoilData(buffer) {
+        let sizeOfSoilDataStruct = 8
+        let idx = 4
+        let data = []
+
+        while (idx < buffer.length - 1) {
+            let soilSlice = buffer.slice(idx, idx + sizeOfSoilDataStruct)
+
+            data.push(this.parseStructStrict(soilSlice, SOIL_DATA_STRUCT, 0));
+
+            idx += sizeOfSoilDataStruct;
+        }
+        return data;
+    }
+    
     parseCustomServerInfo(buffer) {
         return this.parseStructStrict(buffer, CUSTOMIZED_SERVER_STRUCT);
     }
@@ -237,6 +261,7 @@ class GW1000Utils {
 const PARSE = {
     'string': parseString,
     'int8': parseInt8,
+    'uint8': parseUInt8,
     'uint16': parseUInt16,
     'uint32': parseUInt32,
     'bool': parseBool,
@@ -244,7 +269,7 @@ const PARSE = {
     'rain': decodeRain,
     'bigRain': decodeBigRain
 }
-
+    
 const PACK = {
     'string': packString,
     'int8': packInt8,
@@ -268,6 +293,10 @@ function parseBool(idx, buffer) {
 
 function parseInt8(idx, buffer) {
     return buffer.readInt8(idx);
+}
+
+function parseUInt8(idx, buffer) {
+    return buffer.readUInt8(idx);
 }
 
 function parseUInt16(idx, buffer) {
