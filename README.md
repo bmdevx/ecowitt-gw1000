@@ -18,7 +18,9 @@ getSensors({            //Optional filter can be by type and/or status. Accepts 
 
 getLiveData(filterActiveSensors = true) //Gets current Weather conditions.
 
-getRainData()           //Gets Rain Data. (in development)
+getRainData()           //Gets Rain Data.
+
+getRain()               //New method to get Rain information including, Rain Events
 
 getSoilMoistureCalibration() //Gets Soil Moisture Calibration Data (including current analog and digital value for all connected sensors)
 
