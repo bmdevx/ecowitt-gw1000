@@ -1,4 +1,4 @@
-const LIVE_DATA_STRUCT = {
+const DATA_STRUCT = {
 /*x01*/ 1: [decodeTemp, 2, 'intemp'],
 /*x02*/ 2: [decodeTemp, 2, 'outtemp'],
 /*x03*/ 3: [decodeTemp, 2, 'dewpoint'],
@@ -11,6 +11,7 @@ const LIVE_DATA_STRUCT = {
 /*x0A*/ 10: [decodeDir, 2, 'winddir'],
 /*x0B*/ 11: [decodeSpeed, 2, 'windspeed'],
 /*x0C*/ 12: [decodeSpeed, 2, 'gustspeed'],
+
 /*x0D*/ 13: [decodeRain, 2, 'rainevent'],
 /*x0E*/ 14: [decodeRainRate, 2, 'rainrate'],
 /*x0F*/ 15: [decodeRain, 2, 'rainhour'],
@@ -19,6 +20,7 @@ const LIVE_DATA_STRUCT = {
 /*x12*/ 18: [decodeBigRain, 4, 'rainmonth'],
 /*x13*/ 19: [decodeBigRain, 4, 'rainyear'],
 /*x14*/ 20: [decodeBigRain, 4, 'raintotals'],
+
 /*x15*/ 21: [decodeLight, 4, 'light'],
 /*x16*/ 22: [decodeUV, 2, 'uv'],
 /*x17*/ 23: [decodeUVI, 1, 'uvi'],
@@ -75,6 +77,7 @@ const LIVE_DATA_STRUCT = {
 /*x4A*/ 74: [decodeMoist, 1, 'soilmoist16'],
 
 /*x4C*/ 76: [decodeBatt, 16, 'lowbatt'],
+
 /*x4D*/ 77: [decodeAq, 2, 'pm251_24hav'],
 /*x4E*/ 78: [decodeAq, 2, 'pm252_24hav'],
 /*x4F*/ 79: [decodeAq, 2, 'pm253_24hav'],
@@ -91,6 +94,7 @@ const LIVE_DATA_STRUCT = {
 /*x60*/ 96: [decodeDistance, 1, 'lightningdist'],
 /*x61*/ 97: [decodeUTC, 4, 'lightningdettime'],
 /*x62*/ 98: [decodeCount, 4, 'lightningcount'],
+
 /*x63*/ 99: [decodeTempBatt, 3, 'usertemp1'],
 /*x64*/ 100: [decodeTempBatt, 3, 'usertemp2'],
 /*x65*/ 101: [decodeTempBatt, 3, 'usertemp3'],
@@ -99,6 +103,30 @@ const LIVE_DATA_STRUCT = {
 /*x68*/ 104: [decodeTempBatt, 3, 'usertemp6'],
 /*x69*/ 105: [decodeTempBatt, 3, 'usertemp7'],
 /*x6A*/ 106: [decodeTempBatt, 3, 'usertemp8'],
+
+/*x70*/ 112: [decodeCO2, 16, 'co2'],
+/*x71*/ //113: [decodePM25AQI, 0, 'pm25aqi'],
+
+/*x72*/ 114: [parseBool, 1, 'leafwet1'],
+/*x73*/ 115: [parseBool, 1, 'leafwet2'],
+/*x74*/ 116: [parseBool, 1, 'leafwet3'],
+/*x75*/ 117: [parseBool, 1, 'leafwet4'],
+/*x76*/ 118: [parseBool, 1, 'leafwet5'],
+/*x77*/ 119: [parseBool, 1, 'leafwet6'],
+/*x78*/ 120: [parseBool, 1, 'leafwet7'],
+/*x79*/ 121: [parseBool, 1, 'leafwet8'],
+
+/*x7A*/ 122: [parseInt8, 1, 'rain_source'],
+
+/*x80*/ 128: [decodeRainRate, 2, 'piezo_rainrate'],
+/*x81*/ 129: [decodeRain, 2, 'piezo_rainevent'],
+/*x82*/ 130: [decodeRain, 2, 'piezo_rainhour'],
+/*x83*/ 131: [decodeBigRain, 4, 'piezo_rainday'],
+/*x84*/ 132: [decodeBigRain, 4, 'piezo_rainweek'],
+/*x85*/ 133: [decodeBigRain, 4, 'piezo_rainmonth'],
+/*x86*/ 134: [decodeBigRain, 4, 'piezo_rainyear'],
+/*x87*/ 135: [decodeGain10, 20, 'piezo_gain10'],
+/*x88*/ 136: [decodeRstRain, 3, 'rst_raintime'],
 }
 
 const CUSTOMIZED_SERVER_STRUCT = [
@@ -117,24 +145,39 @@ const USER_PATH_STRUCT = [
 ]
 
 const RAIN_DATA_STRUCT = [
-    ['rain_event', 'rain', 2], // confirm (may not exist)
-    ['rain_rate', 'rain', 2], // confirm (may be 4)
-    ['rain_hour', 'rain', 2], // confirm (may not exist)
-    ['rain_day', 'rain', 2], // confirm (may be 4)
-    ['rain_week', 'bigRain', 4], // confirm (may be 2)
+    ['rain_rate', 'bigRain', 4],
+    ['rain_day', 'bigRain', 4],
+    ['rain_week', 'bigRain', 4],
     ['rain_month', 'bigRain', 4],
     ['rain_year', 'bigRain', 4]
 ]
 
-    const SOIL_DATA_STRUCT = [
-        ['channel', 'uint8', 1], // confirm (may not exist)
-        ['current_humidity', 'uint8', 1], // confirm (may be 4)
-        ['current_ad', 'uint16', 2], // confirm (may not exist)
-        ['calibration_enabled', 'uint8', 1], // confirm (may be 4)
-        ['min_ad', 'uint8', 1], // confirm (may be 2)
-        ['max_ad', 'uint16', 2],
-    ]
-    
+const RAIN_STRUCT = {
+/*x10*/ 16: [decodeBigRain, 4, 'rainday'],
+/*x11*/ 17: [decodeBigRain, 4, 'rainweek'],
+}
+
+const SOIL_DATA_STRUCT = [
+    ['channel', 'uint8', 1],
+    ['current_humidity', 'uint8', 1],
+    ['current_ad', 'uint16', 2],
+    ['calibration_enabled', 'uint8', 1],
+    ['min_ad', 'uint8', 1],
+    ['max_ad', 'uint16', 2],
+]
+
+const CO2_STRUCT = [
+    ['tf_co2', 'temp', 2],
+    ['humi_co2', 'uint8', 1],
+    ['pm10_co2', 'ugm3', 2],
+    ['pm10_24h_co2', 'ugm3', 2],
+    ['pm25_co2', 'ugm3', 2],
+    ['pm25_24h_co2', 'ugm3', 2],
+    ['co2', 'uint16', 2],
+    ['co2_24h', 'uint16', 2],
+    ['co2_batt', 'uint8', 1]
+]
+
 var MULTI_BATT = {
     'wh40': 4,
     'wh26': 5,
@@ -156,49 +199,19 @@ class GW1000Utils {
                 delete MULTI_BATT.wh24;
             }
         }
-
-        this.parseStructStrict = (buffer, struct, idx = 4) => {
-            var data = {};
-
-            struct.forEach(([field, func, fieldSize]) => {
-                if (fieldSize == null) {
-                    fieldSize = buffer.readInt8(idx);
-
-                    var rfunc = PARSE[func];
-                    if (rfunc === undefined) {
-                        console.log(func);
-                    }
-
-                    data[field] = rfunc(idx + 1, buffer, fieldSize);
-                    idx += fieldSize + 1;
-                } else {
-                    data[field] = PARSE[func](idx, buffer, fieldSize);
-                    idx += fieldSize;
-                }
-            });
-
-            return data;
-        }
-
-        this.packStructStrict = (data, struct) => {
-            var buffer = new Buffer.alloc(256);
-            var idx = 0;
-
-            struct.forEach(([field, func, fieldSize]) => {
-                const [nidx, nbuffer] = PACK[func](idx, buffer, data[field]);
-                idx = nidx;
-                buffer = nbuffer;
-            });
-
-            return Uint8Array.from(buffer.slice(0, idx));
-        }
     }
 
     parseLiveData(buffer, timestamp = null) {
         var data = {}, idx = 5;
+        const size = parseUInt16(3, buffer);
 
-        while (idx < buffer.length - 1) {
-            var [func, fieldSize, field] = LIVE_DATA_STRUCT[buffer.readInt8(idx++)];
+        while (idx < size - 1 && idx < buffer.length - 1) {
+            const cix = buffer.readUInt8(idx++);
+            if (DATA_STRUCT[cix] === undefined) {
+                break;
+            }
+
+            var [func, fieldSize, field] = DATA_STRUCT[cix];
 
             data[field] = func(idx, buffer);
 
@@ -220,38 +233,59 @@ class GW1000Utils {
         while (idx < buffer.length - 1) {
             let soilSlice = buffer.slice(idx, idx + sizeOfSoilDataStruct)
 
-            data.push(this.parseStructStrict(soilSlice, SOIL_DATA_STRUCT, 0));
+            data.push(parseStructStrict(soilSlice, SOIL_DATA_STRUCT, 0));
 
             idx += sizeOfSoilDataStruct;
         }
         return data;
     }
-    
+
     parseCustomServerInfo(buffer) {
-        return this.parseStructStrict(buffer, CUSTOMIZED_SERVER_STRUCT);
+        return parseStructStrict(buffer, CUSTOMIZED_SERVER_STRUCT);
     }
 
     parseUserPathInfo(buffer) {
-        return this.parseStructStrict(buffer, USER_PATH_STRUCT);
+        return parseStructStrict(buffer, USER_PATH_STRUCT);
     }
 
     parseRainData(buffer) {
-        return this.parseStructStrict(buffer, RAIN_DATA_STRUCT);
+        return parseStructStrict(buffer, RAIN_DATA_STRUCT);
     }
 
+    parseRain(buffer) {
+        var data = {}, idx = 5;
+        const size = parseUInt16(3, buffer);
+
+        while (idx < size - 1 && idx < buffer.length - 1) {
+            const cix = buffer.readUInt8(idx++);
+            if (DATA_STRUCT[cix] === undefined) {
+                break;
+            }
+            const [func, fieldSize, field] = RAIN_STRUCT[cix] != undefined ? RAIN_STRUCT[cix] : DATA_STRUCT[cix];
+
+            data[field] = func(idx, buffer);
+
+            idx += fieldSize;
+        }
+
+        return data;
+    }
 
     packCustomServerInfo(data) {
-        return this.packStructStrict(data, CUSTOMIZED_SERVER_STRUCT);
+        return packStructStrict(data, CUSTOMIZED_SERVER_STRUCT);
     }
 
     packUserPathInfo(data) {
-        return this.packStructStrict(data, USER_PATH_STRUCT);
+        return packStructStrict(data, USER_PATH_STRUCT);
     }
 
     packRainData(data) {
-        return this.packStructStrict(data, RAIN_DATA_STRUCT);
+        return packStructStrict(data, RAIN_DATA_STRUCT);
     }
 
+    packSoilData(data) {
+        return packStructStrict(data, SOIL_DATA_STRUCT);
+    }
 
     static calcChecksum(body) {
         return calcChecksum(body);
@@ -267,12 +301,15 @@ const PARSE = {
     'bool': parseBool,
     'protocol': parseProtocol,
     'rain': decodeRain,
-    'bigRain': decodeBigRain
+    'bigRain': decodeBigRain,
+    'temp': decodeTemp,
+    'ugm3': decodeUgm3,
 }
-    
+
 const PACK = {
     'string': packString,
     'int8': packInt8,
+    'uint8': packUInt8,
     'uint16': packUInt16,
     'uint32': packUInt32,
     'bool': packBool,
@@ -281,6 +318,42 @@ const PACK = {
     'bigRain': packBigRain
 }
 
+
+function parseStructStrict(buffer, struct, idx = 4) {
+    var data = {};
+
+    struct.forEach(([field, func, fieldSize]) => {
+        if (fieldSize == null) {
+            fieldSize = buffer.readInt8(idx);
+
+            var rfunc = PARSE[func];
+            if (rfunc === undefined) {
+                console.log(func);
+            }
+
+            data[field] = rfunc(idx + 1, buffer, fieldSize);
+            idx += fieldSize + 1;
+        } else {
+            data[field] = PARSE[func](idx, buffer, fieldSize);
+            idx += fieldSize;
+        }
+    });
+
+    return data;
+}
+
+function packStructStrict(data, struct) {
+    var buffer = new Buffer.alloc(256);
+    var idx = 0;
+
+    struct.forEach(([field, func, fieldSize]) => {
+        const [nidx, nbuffer] = PACK[func](idx, buffer, data[field]);
+        idx = nidx;
+        buffer = nbuffer;
+    });
+
+    return Uint8Array.from(buffer.slice(0, idx));
+}
 
 
 function parseString(idx, buffer, length) {
@@ -327,6 +400,11 @@ function packBool(idx, buffer, data) {
 
 function packInt8(idx, buffer, data) {
     buffer.writeInt8(data, idx);
+    return [idx + 1, buffer];
+}
+
+function packUInt8(idx, buffer, data) {
+    buffer.writeUInt8(data, idx);
     return [idx + 1, buffer];
 }
 
@@ -506,6 +584,55 @@ function decodeLeak(idx, buffer) {
     return buffer.readInt8(idx);
 }
 
+/* Decode Rain Reset Date & Time */
+function decodeRstRain(idx, buffer) {
+    const rstHr = buffer.readUInt8(idx);
+    const rstDay = buffer.readInt8(idx + 1);
+    const rstMonth = buffer.readUInt8(idx + 2);
+
+    const MONTHS = [
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'November',
+        'December'
+    ]
+
+    return `${MONTHS[rstMonth]}, ${rstDay === 0 ? 'Sunday' : 'Monday'}, Hour: ${rstHr}`;
+}
+
+/* Decode Piezo Gain Fields */
+function decodeGain10(idx, buffer) {
+    var data = {}
+
+    for (var i = 0; i < 10; i++) {
+        data[`gain${i}`] = parseUInt8(idx + i * 2, buffer);
+    }
+
+    return data;
+}
+
+/* Decode ug/m3 data */
+function decodeUgm3(idx, buffer) {
+    return buffer.readUInt16(idx) * 10;
+}
+
+/* Decode ppm data */
+function decodePPM(idx, buffer) {
+    return buffer.readUInt16(idx);
+}
+
+/* Decode CO2 Fields */
+function decodeCO2(idx, buffer) {
+    return parseStructStrict(buffer, CO2_STRUCT, idx);
+}
+
 /* Decode battery status data.
 Battery status data is provided in 16 bytes using a variety of
 representations. Different representations include:
@@ -563,16 +690,7 @@ function decodeBatt(idx, buffer) {
     var status = {};
 
     batt_fields.forEach(([sensor, size, func, format]) => {
-        var data = null;
-
-        // if (size == 1)
-        //     data = buffer.readUInt8(idx);
-        // else if (size == 2)
-        //     data = buffer.readUInt16BE(idx);
-        // else if (size == 4)
-        //     data = buffer.readUInt32BE(idx);
-
-        data = buffer.readUIntBE(idx, size);
+        const data = buffer.readUIntBE(idx, size);
 
         idx += size;
 

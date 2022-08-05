@@ -24,7 +24,7 @@ const Commands = {
     CMD_SET_MUlCH_OFFSET: 0x2D, // write back multi sensor OFFSET value
     CMD_GET_PM25_OFFSET: 0x2E,  // read PM2.5OFFSET value
     CMD_SET_PM25_OFFSET: 0x2F,  // write back PM2.5OFFSET value
-    CMD_READ_SSSS: 0x30,        // read sensor setup ( sensor frequency, wh24/wh65 sensor)
+    CMD_READ_SSSS: 0x30,        // read sensor setup (sensor frequency, wh24/wh65 sensor)
     CMD_WRITE_SSSS: 0x31,       // write back sensor setup
 
     CMD_READ_RAINDATA: 0x34,    // read rain data
@@ -44,6 +44,14 @@ const Commands = {
     CMD_READ_FIRMWARE: 0x50,    // read back firmware version
     CMD_READ_USR_PATH: 0x51,    // read path for custom Server
     CMD_WRITE_USR_PATH: 0x52,   // write path for custom Server
+
+    CMD_GET_CO2_OFFSET: 0x53,
+    CMD_SET_CO2_OFFSET: 0x54,
+
+    CMD_READ_RSTRAIN_TIME: 0x55, // read rain reset time
+    CMD_WRITE_RSTRAIN_TIME: 0x56,// write rain reset time
+    CMD_READ_RAIN: 0x57,
+    CMD_WRITE_RAIN: 0x58
 }
 
 const CommandRespSize =
@@ -81,13 +89,21 @@ const CommandRespSize =
     CMD_READ_SENSOR_ID: 1,
     CMD_WRITE_SENSOR_ID: 1,
     CMD_WRITE_REBOOT: 1,
-    CMD_WRITE_RESET: 1
+    CMD_WRITE_RESET: 1,
+
+    CMD_GET_CO2_OFFSET: 0x53,
+    CMD_SET_CO2_OFFSET: 0x54,
+
+    CMD_READ_RSTRAIN_TIME: 0x55,
+    CMD_WRITE_RSTRAIN_TIME: 0x56,
+    CMD_READ_RAIN: 0x57,
+    CMD_WRITE_RAIN: 0x58
 }
 
 const SensorIDs =
     [
-        'WH65',
-        'WH68',
+        'WH65', //0 AKA 24
+        'WH68', //AKA 69
         'WH80',
         'WH40',
         'WH25',
@@ -96,7 +112,7 @@ const SensorIDs =
         'WH31_CH2',
         'WH31_CH3',
         'WH31_CH4',
-        'WH31_CH5',
+        'WH31_CH5', //10
         'WH31_CH6',
         'WH31_CH7',
         'WH31_CH8',
@@ -106,7 +122,7 @@ const SensorIDs =
         'WH51_CH4',
         'WH51_CH5',
         'WH51_CH6',
-        'WH51_CH7',
+        'WH51_CH7', //20
         'WH51_CH8',
         'WH41_CH1',
         'WH41_CH2',
@@ -116,7 +132,26 @@ const SensorIDs =
         'WH55_CH1',
         'WH55_CH2',
         'WH55_CH3',
-        'WH55_CH4'
+        'WH55_CH4', //30
+        'WH34_CH1',
+        'WH34_CH2',
+        'WH34_CH3',
+        'WH34_CH4',
+        'WH34_CH5',
+        'WH34_CH6',
+        'WH34_CH7',
+        'WH34_CH8',
+        'WH45',
+        'WH35_CH1', //40
+        'WH35_CH2',
+        'WH35_CH3',
+        'WH35_CH4',
+        'WH35_CH5',
+        'WH35_CH6',
+        'WH35_CH7',
+        'WH35_CH8',
+        'WH90',
+
     ];
 
 class GW1000 {
@@ -237,30 +272,31 @@ class GW1000 {
 
                     if (filterActiveSensors) {
                         const filterSensors = (data, sensors) => {
+                            if (data.lowbatt) {
+                                Object.keys(data.lowbatt).forEach(key => {
+                                    var ukey = key.toUpperCase();
 
-                            Object.keys(data.lowbatt).forEach(key => {
-                                var ukey = key.toUpperCase();
+                                    if (typeof data.lowbatt[key] === 'object') {
 
-                                if (typeof data.lowbatt[key] === 'object') {
+                                        Object.keys(data.lowbatt[key]).forEach(chn => {
+                                            const uchn = chn.toUpperCase();
+                                            const usen = key.toUpperCase();
 
-                                    Object.keys(data.lowbatt[key]).forEach(chn => {
-                                        const uchn = chn.toUpperCase();
-                                        const usen = key.toUpperCase();
+                                            if (sensors.filter(s => s.type === `${usen}_${uchn}` && s.status === 'active').length < 1) {
+                                                delete data.lowbatt[key][chn];
+                                            }
+                                        });
 
-                                        if (sensors.filter(s => s.type === `${usen}_${uchn}` && s.status === 'active').length < 1) {
-                                            delete data.lowbatt[key][chn];
+                                        if (Object.keys(data.lowbatt[key]).length < 1) {
+                                            delete data.lowbatt[key];
                                         }
-                                    });
-
-                                    if (Object.keys(data.lowbatt[key]).length < 1) {
-                                        delete data.lowbatt[key];
+                                    } else {
+                                        if (sensors.filter(s => s.type === ukey && s.status === 'active').length < 1) {
+                                            delete data.lowbatt[key];
+                                        }
                                     }
-                                } else {
-                                    if (sensors.filter(s => s.type === ukey && s.status === 'active').length < 1) {
-                                        delete data.lowbatt[key];
-                                    }
-                                }
-                            });
+                                });
+                            }
 
                             res(data);
                         };
@@ -286,15 +322,6 @@ class GW1000 {
             this.runCommand(Commands.CMD_READ_RAINDATA)
                 .then(buffer => {
                     res(this.utils.parseRainData(buffer));
-                });
-        });
-    }
-
-    getSoilMoistureCalibration() {
-        return new Promise((res, rej) => {
-            this.runCommand(Commands.CMD_GET_SOILHUMIAD)
-                .then(buffer => {
-                    res(this.utils.parseSoilData(buffer));
                 });
         });
     }
@@ -337,6 +364,75 @@ class GW1000 {
                             res({
                                 status: 'Rain Updated',
                                 data: rd
+                            });
+                        });
+                });
+        });
+    }
+
+    //New Implementation with Event and Piezo data
+    getRain() {
+        return new Promise((res, rej) => {
+            this.runCommand(Commands.CMD_READ_RAIN)
+                .then(buffer => {
+                    res(this.utils.parseRain(buffer));
+                });
+        });
+    }
+
+
+    getSoilMoistureCalibration() {
+        return new Promise((res, rej) => {
+            this.runCommand(Commands.CMD_GET_SOILHUMIAD)
+                .then(buffer => {
+                    res(this.utils.parseSoilData(buffer));
+                });
+        });
+    }
+
+    setSoilMoistureCalibration(data) {
+        return new Promise((res, rej) => {
+            this.getSoilMoistureCalibration()
+                .then(sd => {
+                    Object.assign(sd, data);
+
+                    if (typeof sd.channel !== 'number' || sd.channel < 1 || sd.channel > 8) {
+                        rej('Channel must be a number from 1 to 8.');
+                        return;
+                    }
+
+                    if (typeof sd.current_humidity !== 'number' || sd.current_humidity < 0) {
+                        rej('Current Humidity must be a number >= 0.');
+                        return;
+                    }
+
+                    if (typeof sd.current_ad !== 'number' || sd.current_ad < 0) {
+                        rej('Current AD must be a number >= 0.');
+                        return;
+                    }
+
+                    if (typeof sd.calibration_enabled !== 'number' || sd.calibration_enabled < 0 || sd.calibration_enabled > 1) {
+                        rej('Customize Calibration Option must be either 1 or enabled or 0 for disabled.');
+                        return;
+                    }
+
+                    if (typeof sd.min_ad !== 'number' || sd.min_ad < 0) {
+                        rej('min AD must be a number >= 0.');
+                        return;
+                    }
+
+                    if (typeof sd.max_ad !== 'number' || sd.max_ad < 0) {
+                        rej('min AD must be a number >= 0.');
+                        return;
+                    }
+
+                    const packetSoil = this.utils.packSoilData(sd);
+
+                    this.runCommand(Commands.CMD_SET_SOILHUMIAD, packetSoil)
+                        .then(cr => {
+                            res({
+                                status: 'Soil Updated',
+                                data: sd
                             });
                         });
                 });

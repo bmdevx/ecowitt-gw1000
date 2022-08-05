@@ -1,6 +1,6 @@
 # Ecowitt GW1000
 
-![David](https://img.shields.io/david/bmdevx/ecowitt-gw1000?style=flat-square)  ![npm](https://img.shields.io/npm/dt/ecowitt-gw1000?style=flat-square) ![npm](https://img.shields.io/npm/v/ecowitt-gw1000?style=flat-square) ![GitHub](https://img.shields.io/github/license/bmdevx/ecowitt-gw1000?style=flat-square)
+![GitHub last commit](https://img.shields.io/github/last-commit/bmdevx/ecowitt-gw1000?style=flat-square)  ![npm](https://img.shields.io/npm/dt/ecowitt-gw1000?style=flat-square) ![npm](https://img.shields.io/npm/v/ecowitt-gw1000?style=flat-square) ![GitHub](https://img.shields.io/github/license/bmdevx/ecowitt-gw1000?style=flat-square)
 
 ## Features
 
