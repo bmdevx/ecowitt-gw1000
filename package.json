@@ -1,6 +1,6 @@
 {
   "name": "ecowitt-gw1000",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Retrieve data and get and set setting for Ecowitt GW1000 and GW1100",
   "main": "src/GW1000.js",
   "scripts": {
