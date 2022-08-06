@@ -24,6 +24,10 @@ getRain()               //New method to get Rain information including, Rain Eve
 
 getSoilMoistureCalibration() //Gets Soil Moisture Calibration Data (including current analog and digital value for all connected sensors)
 
+getPM25Offset()         // Gets PM25 Offset Data
+
+getCO2Offset()          // Gets CO2 Offset Data
+
 getFirmwareVersion()    //Gets current Firmware version.
 
 getSystemParams()       //Gets System Parameters. (in development)

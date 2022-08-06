@@ -271,12 +271,40 @@ class GW1000 {
                     const packetSoil = this.utils.packSoilData(sd);
 
                     this.runCommand(COMMANDS.CMD_SET_SOILHUMIAD, packetSoil)
-                        .then(cr => {
-                            res({
-                                status: 'Soil Updated',
-                                data: sd
-                            });
+                        .then(ss => {
+                            const ssResult = this.utils.parseResult(ss);
+
+                            if (ssResult.result) {
+                                res({
+                                    status: 'Soil Updated',
+                                    data: sd
+                                });
+                            } else {
+                                rej({
+                                    status: 'Soil Calibration Not Updated',
+                                    data: sd
+                                });
+                            }
                         });
+                });
+        });
+    }
+
+
+    getPM25Offset() {
+        return new Promise((res, rej) => {
+            this.runCommand(COMMANDS.CMD_GET_PM25_OFFSET)
+                .then(buffer => {
+                    res(this.utils.parsePM25Data(buffer));
+                });
+        });
+    }
+
+    getCO2Offset() {
+        return new Promise((res, rej) => {
+            this.runCommand(COMMANDS.CMD_GET_CO2_OFFSET)
+                .then(buffer => {
+                    res(this.utils.parseCO2OffsetData(buffer));
                 });
         });
     }
@@ -349,13 +377,31 @@ class GW1000 {
 
                     this.runCommand(COMMANDS.CMD_WRITE_CUSTOMIZED, packetCI)
                         .then(cr => {
-                            this.runCommand(COMMANDS.CMD_WRITE_USR_PATH, packetUP)
-                                .then(cr2 => {
-                                    res({
-                                        status: 'Server Updated',
-                                        data: csi
+                            const crResult = this.utils.parseResult(cr);
+
+                            if (crResult.result) {
+                                this.runCommand(COMMANDS.CMD_WRITE_USR_PATH, packetUP)
+                                    .then(wspRes => {
+                                        const wspResult = this.utils.parseResult(wspRes);
+
+                                        if (wspResult.result) {
+                                            res({
+                                                status: 'Server Updated',
+                                                data: csi
+                                            });
+                                        } else {
+                                            rej({
+                                                status: 'Server Not Updated',
+                                                data: csi
+                                            })
+                                        }
                                     });
-                                });
+                            } else {
+                                rej({
+                                    status: 'Server Not Updated',
+                                    data: csi
+                                })
+                            }
                         });
 
                     // console.debug(packetCI.toString('hex'));

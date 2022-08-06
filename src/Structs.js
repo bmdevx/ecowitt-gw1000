@@ -1,16 +1,3 @@
-
-const CO2_STRUCT = [
-    ['tf_co2', 'temp', 2],
-    ['humi_co2', 'uint8', 1],
-    ['pm10_co2', 'ugm3', 2],
-    ['pm10_24h_co2', 'ugm3', 2],
-    ['pm25_co2', 'ugm3', 2],
-    ['pm25_24h_co2', 'ugm3', 2],
-    ['co2', 'uin16', 2],
-    ['co2_24h', 'uin16', 2],
-    ['co2_batt', 'uint8', 1]
-]
-
 const DATA_STRUCT = {
     /*x01*/ 1: ['intemp', 'temp', 2],
     /*x02*/ 2: ['outtemp', 'temp', 2],
@@ -117,7 +104,7 @@ const DATA_STRUCT = {
     /*x69*/ 105: ['usertemp7', 'tempBatt', 3],
     /*x6A*/ 106: ['usertemp8', 'tempBatt', 3],
 
-    /*x70*/ 112: ['co2', 'co2', 16, CO2_STRUCT],
+    /*x70*/ 112: ['co2', 'co2', 16],
     /*x71*/ //113: ['pm25aqi', decodePM25AQI, 0],
 
     /*x72*/ 114: ['leafwet1', 'bool', 1],
@@ -141,6 +128,19 @@ const DATA_STRUCT = {
     /*x87*/ 135: ['piezo_gain10', 'gain10', 20],
     /*x88*/ 136: ['rst_raintime', 'rstRain', 3],
 }
+
+const GENERIC_RESULT_STRUCT = [
+    ['result', 'bool', 1]
+]
+
+const GENERIC_VALUE_RESULT_STRUCT = [
+    ['result', 'int8', 1]
+]
+
+const WIFI_STRUCT = [
+    ['ssid', 'string', null],
+    ['key', 'string', null]
+]
 
 
 const CUSTOMIZED_SERVER_STRUCT = [
@@ -191,8 +191,34 @@ const SOIL_DATA_STRUCT_SET = [
 ]
 
 
+const CO2_STRUCT = [
+    ['tf_co2', 'temp', 2],
+    ['humi_co2', 'uint8', 1],
+    ['pm10_co2', 'ugm3', 2],
+    ['pm10_24h_co2', 'ugm3', 2],
+    ['pm25_co2', 'ugm3', 2],
+    ['pm25_24h_co2', 'ugm3', 2],
+    ['co2', 'uin16', 2],
+    ['co2_24h', 'uin16', 2],
+    ['co2_batt', 'uint8', 1]
+]
+
+const CO2_OFFSET_STRUCT = [
+    ['co2_offset', 'int16', 2],
+    ['pm25_offset', 'ugm3_offset'],
+    ['pm10_offset', 'ugm3_offset']
+]
+
+const PM25_OFFSET_STRUCT = [
+    ['channel', 'uint8', 1],
+    ['pm25_offset', 'ugm3_offset', 2],
+]
+
 module.exports = {
     DATA_STRUCT: DATA_STRUCT,
+
+    GENERIC_RESULT_STRUCT: GENERIC_RESULT_STRUCT,
+    GENERIC_VALUE_RESULT_STRUCT: GENERIC_VALUE_RESULT_STRUCT,
 
     CUSTOMIZED_SERVER_STRUCT: CUSTOMIZED_SERVER_STRUCT,
 
@@ -205,6 +231,9 @@ module.exports = {
     SOIL_DATA_STRUCT_SET: SOIL_DATA_STRUCT_SET,
 
     CO2_STRUCT: CO2_STRUCT,
+
+    CO2_OFFSET_STRUCT: CO2_OFFSET_STRUCT,
+    PM25_OFFSET_STRUCT: PM25_OFFSET_STRUCT,
 }
 
 

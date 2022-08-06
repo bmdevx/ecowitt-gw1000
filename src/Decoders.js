@@ -4,6 +4,7 @@ const DECODE = {
     'rainRate': decodeRainRate,
     'temp': decodeTemp,
     'ugm3': decodeUgm3,
+    'ugm3_offset': decodeUgm3Offset,
     'humid': decodeHumid,
     'pressure': decodePress,
     'dir': decodeDir,
@@ -211,12 +212,17 @@ function decodeGain10(idx, buffer) {
 
 /* Decode ug/m3 data */
 function decodeUgm3(idx, buffer) {
-    return buffer.readUInt16(idx) * 10;
+    return buffer.readUInt16BE(idx) * 10;
+}
+
+/* Decode ug/m3 offset data */
+function decodeUgm3Offset(idx, buffer) {
+    return buffer.readInt16BE(idx) * 10;
 }
 
 /* Decode ppm data */
 function decodePPM(idx, buffer) {
-    return buffer.readUInt16(idx);
+    return buffer.readUInt16BE(idx);
 }
 
 
@@ -414,6 +420,7 @@ module.exports = {
     decodeRstRain: decodeRstRain,
     decodeGain10: decodeGain10,
     decodeUgm3: decodeUgm3,
+    decodeUgm3Offset: decodeUgm3Offset,
     decodePPM: decodePPM,
     decodeBatt: decodeBatt
 }

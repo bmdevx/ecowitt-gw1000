@@ -1,3 +1,5 @@
+const { decodeUgm3Offset } = require("./Decoders");
+
 const PACK = {
     'string': packString,
     'bool': packBool,
@@ -11,7 +13,7 @@ const PACK = {
     'rain': packRain,
     'bigRain': packBigRain,
     // 'temp': packTemp,
-    // 'ugm3': packUgm3,
+    'ugm3': packUgm3,
     // 'co2': packCO2,
     // 'humid': packHumid,
     // 'pressure': packPress,
@@ -92,6 +94,16 @@ function packBigRain(idx, buffer, value) {
     return packUInt32(idx, buffer, value * 10);
 }
 
+/* Pack ug/m3 data */
+function packUgm3(idx, buffer, value) {
+    return packUInt16(idx, buffer, value / 10);
+}
+
+/* Pack ug/m3 data */
+function packUgm3Offset(idx, buffer, value) {
+    return packInt16(idx, buffer, value / 10);
+}
+
 module.exports = {
     PACK: PACK,
     packString: packString,
@@ -104,5 +116,7 @@ module.exports = {
     packUInt32: packUInt32,
     packProtocol: packProtocol,
     packRain: packRain,
-    packBigRain: packBigRain
+    packBigRain: packBigRain,
+    packUgm3: packUgm3,
+    packUgm3Offset: packUgm3Offset
 }

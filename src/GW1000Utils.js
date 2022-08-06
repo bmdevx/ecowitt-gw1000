@@ -1,16 +1,22 @@
 const {
     DATA_STRUCT,
+    GENERIC_RESULT_STRUCT, GENERIC_VALUE_RESULT_STRUCT,
     CUSTOMIZED_SERVER_STRUCT,
     SOIL_DATA_STRUCT_GET, SOIL_DATA_STRUCT_SET,
     USER_PATH_STRUCT,
-    RAIN_DATA_STRUCT, RAIN_STRUCT
+    RAIN_DATA_STRUCT, RAIN_STRUCT,
+    PM25_OFFSET_STRUCT,
+    CO2_OFFSET_STRUCT
 } = require('./Structs');
 const {
     PARSE_DECODERS,
     BATT_FIELDS,
     parseStructStrict,
-    packStructStrict
+    packStructStrict,
 } = require('./ParseDecoders');
+const {
+    decodeUgm3
+} = require('./Decoders');
 
 
 class GW1000Utils {
@@ -30,6 +36,13 @@ class GW1000Utils {
                 delete multi_batt.wh24;
             }
         }
+    }
+
+
+    parseResult(buffer, hasValue = false) {
+        const result = parseStructStrict(buffer, hasValue ? GENERIC_VALUE_RESULT_STRUCT : GENERIC_RESULT_STRUCT);
+        result['cmd'] = buffer.readUInt8(3);
+        return result;
     }
 
 
@@ -136,6 +149,28 @@ class GW1000Utils {
 
     packSoilData(data) {
         return packStructStrict(data, SOIL_DATA_STRUCT_SET);
+    }
+
+
+    parsePM25Data(buffer) {
+        const sizeOfPM25Struct = 3
+        var idx = 4
+        var sensors = []
+
+        while (idx < buffer.length - 3) {
+            var pm25Sensor = buffer.slice(idx, idx + sizeOfPM25Struct)
+
+            sensors.push(parseStructStrict(pm25Sensor, PM25_OFFSET_STRUCT, 0));
+
+            idx += sizeOfPM25Struct;
+        }
+
+        return sensors;
+    }
+
+
+    parseCO2OffsetData(buffer) {
+        return parseStructStrict(buffer, CO2_OFFSET_STRUCT);
     }
 
 
