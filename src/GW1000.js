@@ -60,48 +60,11 @@ class GW1000 {
 
 
     getSensors(filter = null) {
-        const statusFilter = (filter && filter.status) ?
-            (typeof filter.status === 'string') ?
-                (status) => status.includes(filter.status.toLowerCase()) :
-                Array.isArray(filter.status) ?
-                    (status) => filter.status.includes(status.toLowerCase()) :
-                    (x) => true
-            : (x) => true;
-
-        const typeFilter = (filter && filter.type) ?
-            (typeof filter.type === 'string') ?
-                (type) => type.includes(filter.type.toUpperCase()) :
-                Array.isArray(filter.type) ?
-                    (type) => filter.type.includes(type.toUpperCase()) :
-                    (x) => true
-            : (x) => true;
-
         return new Promise((res, rej) => {
-            this.runCommand(COMMANDS.CMD_READ_SENSOR_ID)
+            this.runCommand(COMMANDS.CMD_READ_SENSOR_ID_NEW)
                 .then(buffer => {
                     if (buffer.length > 200) {
-                        var sensors = [];
-
-                        for (var i = 4; i < buffer[3]; i += 7) {
-                            var id = buffer.toString('hex', i + 1, i + 5).toUpperCase();
-                            var typeID = buffer[i];
-                            var type = typeID < SENSOR_IDS.length && typeID >= 0 ? SENSOR_IDS[typeID] : `Unknown Type (${id})`;
-
-                            var status =
-                                id == 'FFFFFFFE' ? 'disabled' :
-                                    id == 'FFFFFFFF' ? 'registering' :
-                                        'active';
-
-                            if (statusFilter(status) && typeFilter(type)) {
-                                sensors.push({
-                                    type: type,
-                                    status: status,
-                                    id: status == 'active' ? parseInt(id, 16).toString(16).toUpperCase() : null, //remove leading 0's
-                                    signal: status == 'active' ? buffer[i + 6] : null,
-                                    battery: status == 'active' ? buffer[i + 5] : null
-                                });
-                            }
-                        }
+                        const sensors = this.utils.parseSensorData(buffer, filter);
 
                         if (filter === null) {
                             this.sensors = sensors;

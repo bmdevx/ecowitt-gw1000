@@ -31,7 +31,7 @@ const COMMANDS = {
     CMD_WRITE_CALIBRATION: 0x39,//  write back multiple parameter offset
     CMD_READ_SENSOR_ID: 0x3A,   //  read Sensors ID
     CMD_WRITE_SENSOR_ID: 0x3B,  // write back Sensors ID
-    CMD_WRITE_SENSOR_ID_NEW: 0x3C,// write back Sensors ID New
+    CMD_READ_SENSOR_ID_NEW: 0x3C,// read Sensors ID New Versions
 
     CMD_WRITE_REBOOT: 0x40,     // system reset
     CMD_WRITE_RESET: 0x41,      // system default setting reset

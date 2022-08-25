@@ -17,6 +17,10 @@ const {
 const {
     decodeUgm3
 } = require('./Decoders');
+const {
+    SENSOR_IDS
+} = require('./Sensors');
+const { parseUInt16 } = require('./Parsers');
 
 
 class GW1000Utils {
@@ -45,6 +49,52 @@ class GW1000Utils {
         return result;
     }
 
+
+    parseSensorData(buffer, filter = null, newVersion = true) {
+        const statusFilter = (filter && filter.status) ?
+            (typeof filter.status === 'string') ?
+                (status) => status.includes(filter.status.toLowerCase()) :
+                Array.isArray(filter.status) ?
+                    (status) => filter.status.includes(status.toLowerCase()) :
+                    (x) => true
+            : (x) => true;
+
+        const typeFilter = (filter && filter.type) ?
+            (typeof filter.type === 'string') ?
+                (type) => type.includes(filter.type.toUpperCase()) :
+                Array.isArray(filter.type) ?
+                    (type) => filter.type.includes(type.toUpperCase()) :
+                    (x) => true
+            : (x) => true;
+
+        var sensors = [];
+        const payloadSize = newVersion ? parseUInt16(3, buffer) : buffer[3];
+        const startIndex = newVersion ? 5 : 4;
+        const bytesPerSensorData = 7;
+
+        for (var i = startIndex; i < payloadSize; i += bytesPerSensorData) {
+            var id = buffer.toString('hex', i + 1, i + 5).toUpperCase();
+            var typeID = buffer[i];
+            var type = typeID < SENSOR_IDS.length && typeID >= 0 ? SENSOR_IDS[typeID] : `Unknown Type (${id})`;
+
+            var status =
+                id == 'FFFFFFFE' ? 'disabled' :
+                    id == 'FFFFFFFF' ? 'registering' :
+                        'active';
+
+            if (statusFilter(status) && typeFilter(type)) {
+                sensors.push({
+                    type: type,
+                    status: status,
+                    id: status == 'active' ? parseInt(id, 16).toString(16).toUpperCase() : null, //remove leading 0's
+                    battery: status == 'active' ? buffer[i + 5] : null,
+                    signal: status == 'active' ? buffer[i + 6] : null
+                });
+            }
+        }
+
+        return sensors;
+    }
 
     parseLiveData(buffer, timestamp = null) {
         var data = {}, idx = 5;
