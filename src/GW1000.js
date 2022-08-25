@@ -97,8 +97,8 @@ class GW1000 {
                                     type: type,
                                     status: status,
                                     id: status == 'active' ? parseInt(id, 16).toString(16).toUpperCase() : null, //remove leading 0's
-                                    signal: status == 'active' ? buffer[i + 5] : null,
-                                    battery: status == 'active' ? buffer[i + 6] : null
+                                    signal: status == 'active' ? buffer[i + 6] : null,
+                                    battery: status == 'active' ? buffer[i + 5] : null
                                 });
                             }
                         }
