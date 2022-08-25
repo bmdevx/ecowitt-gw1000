@@ -147,8 +147,8 @@ const CUSTOMIZED_SERVER_STRUCT = [
     ['station', 'string', null],
     ['key', 'string', null],
     ['server', 'string', null],
-    ['port', 'uin16', 2],
-    ['interval', 'uin16', 2],
+    ['port', 'uint16', 2],
+    ['interval', 'uint16', 2],
     ['protocol', 'protocol', 1],
     ['enabled', 'bool', 1]
 ]
@@ -177,10 +177,10 @@ const RAIN_STRUCT = {
 const SOIL_DATA_STRUCT_GET = [
     ['channel', 'uint8', 1],
     ['current_humidity', 'uint8', 1],
-    ['current_ad', 'uin16', 2],
+    ['current_ad', 'uint16', 2],
     ['calibration_enabled', 'uint8', 1],
     ['min_ad', 'uint8', 1],
-    ['max_ad', 'uin16', 2],
+    ['max_ad', 'uint16', 2],
 ]
 
 const SOIL_DATA_STRUCT_SET = [
@@ -198,8 +198,8 @@ const CO2_STRUCT = [
     ['pm10_24h_co2', 'ugm3', 2],
     ['pm25_co2', 'ugm3', 2],
     ['pm25_24h_co2', 'ugm3', 2],
-    ['co2', 'uin16', 2],
-    ['co2_24h', 'uin16', 2],
+    ['co2', 'uint16', 2],
+    ['co2_24h', 'uint16', 2],
     ['co2_batt', 'uint8', 1]
 ]
 
