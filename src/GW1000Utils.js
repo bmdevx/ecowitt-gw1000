@@ -100,7 +100,7 @@ class GW1000Utils {
         var data = {}, idx = 5;
         const size = buffer.readUInt16BE(3);
 
-        while (idx < size - 1 && idx < buffer.length - 1) {
+        while (idx < size && idx < buffer.length - 1) {
             const cix = buffer.readUInt8(idx++);
             if (DATA_STRUCT[cix] === undefined) {
                 break;
