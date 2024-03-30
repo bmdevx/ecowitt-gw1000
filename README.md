@@ -1,12 +1,19 @@
-# Ecowitt GW1000
+# Ecowitt GW1000 [DEPRECATED]
 
-![GitHub last commit](https://img.shields.io/github/last-commit/bmdevx/ecowitt-gw1000?style=flat-square)  ![npm](https://img.shields.io/npm/dt/ecowitt-gw1000?style=flat-square) ![npm](https://img.shields.io/npm/v/ecowitt-gw1000?style=flat-square) ![GitHub](https://img.shields.io/github/license/bmdevx/ecowitt-gw1000?style=flat-square)
+## Use [ECOWITT-GATEWAY](https://github.com/bmdevx/ecowitt-gateway) instead
+
+![maintenance-status](https://img.shields.io/badge/maintenance-deprecated-red.svg)  ![npm](https://img.shields.io/npm/dt/ecowitt-gw1000?style=flat-square) ![npm](https://img.shields.io/npm/v/ecowitt-gw1000?style=flat-square) ![GitHub](https://img.shields.io/github/license/bmdevx/ecowitt-gw1000?style=flat-square)
 
 ## Features
 
 * Gets Live Data
 * Gets Device Information
 * Get/Set Custom Server Configuration
+
+### Requirements
+
+* NodeJS 8+
+* Ecowitt Gateway Firmware 1.5.7+ (1.5.9+ for CO2 and 1.6.4+ for Rain commands)
 
 ### Methods
 
@@ -49,6 +56,18 @@ setCustomServerInfo({   //Sets Custom Server Information (All Fields optional)
 })
 
 static discover(timeout)    //Find GW1000, Timeout in milliseconds
+```
+
+### Example
+
+``` js
+const GW1000 = require('ecowitt-gw1000');
+const gw = new GW1000('192.168.X.X', 45000); //port default is 45000 and is optional
+
+gw.getLiveData()
+   .then(data => {
+      console.log(JSON.stringify(data));
+   });
 ```
 
 ## Future Development
